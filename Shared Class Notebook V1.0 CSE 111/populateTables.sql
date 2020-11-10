@@ -1,73 +1,109 @@
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student2000",1234,1000,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student2001",1234,1001,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student2002",1234,1002,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES("student2003",1234,1003,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES("frusu",1234,1004,"professor");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student1000",1234,1005,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES("student1001",1234,1006,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student1002",1234,1007,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES ("student1003",1234,1008,"student");
-INSERT INTO account(a_name, a_pass, a_ID, a_type)
-VALUES("student1004",1234,1009,"student");
+/*populate account*/
+insert into account (a_name, a_pass, a_ID, a_type) values 
+("mang","pang", ABS(RANDOM()) % (999 - 100) + 100, "prof"), 
+("brian","dang", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("minh","ngu", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("tang","alang", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("poke","okie", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("aye","lmao", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("potato","tomato", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("heyo","mayo", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("pringles","single", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("lays","plays", ABS(RANDOM()) % (999 - 100) + 100, "stu"),
+("tango","mango", ABS(RANDOM()) % (999 - 100) + 100, "prof");
 
-INSERT INTO student(s_name, s_ID,s_age, s_year)
-VALUES ("Student 2000", 1000, 21, "Senior"),
-("Student 2001", 1001, 21, "Senior"),
-("Student 2002", 1002, 21, "Senior"),
-("Student 2003", 1003, 21, "Senior"),
-("Student 1000", 1004, 21, "Senior"),
-("Student 1001", 1005, 19, "Sophomore"),
-("Student 1002", 1006, 18, "Freshman"),
-("Student 1003", 1007, 20, "Junior"),
-("Student 1004", 1008, 20, "Junior");
+insert into account (a_name, a_pass, a_ID, a_type) values 
+("Vincent","Chin", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("Nick","Zhu", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("Jason","Nguyen", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("James","Mac", ABS(RANDOM()) % (999 - 100) + 100, "prof");
 
-INSERT INTO classesRegistered(reg_cName,reg_cID,reg_ID)
-VALUES ("CSE 111", 111, 1000),
-("CSE 111", 111, 1000),
-("CSE 111", 111, 1001),
-("CSE 111", 111, 1002),
-("CSE 111", 111, 1003),
-("CSE 111", 111, 1004),
-("CSE 111", 111, 1005),
-("CSE 111", 111, 1006),
-("CSE 111", 111, 1007),
-("CSE 111", 111, 1008)
 
-INSERT INTO classFolder(class_name , class_cID , class_lTime )
-VALUES ("CSE 111", 111,"Monday - Friday"),
-        ("CSE 155", 155, "Tuesday and Thursday, 12:30 pm to 1:45 pm")
+/*populate student*/
+insert into student(s_name, s_ID, s_age, s_year) 
+SELECT a_name, a_ID, ABS(RANDOM()) % (24 - 18) + 18, ABS(RANDOM()) % (6 - 1) + 1
+from account
+where a_type != "prof";
 
-INSERT INTO notePages(n_docName, n_timeStamp, n_cID, n_content)
-VALUES ("projectphase2.pdf", "2:30pm Monday, November 9th, 2020", 111, "Project Documentation")
+/*populate professor*/
+insert into professor(p_name, p_class, p_ID)
+select a_name, "Math-237", a_ID
+from account
+where a_type = "prof" and 
+a_name = "mang";
 
-INSERT INTO professor(p_name, p_cID, p_ID)
-VALUES ("Florin Rusu", 111 , 1004 )
+insert into professor(p_name, p_class, p_ID)
+select a_name, "Wri-101", a_ID
+from account
+where a_type = "prof" and 
+a_name = "poke";
 
-INSERT INTO classRoster(cl_name, cl_ID, cl_cID)
-VALUES ("CSE 111",1000 , 111),
-("CSE 111", 1001, 111),
-("CSE 111", 1002, 111),
-("CSE 111", 1003, 111),
-("CSE 111", 1004, 111),
-("CSE 111", 1005, 111),
-("CSE 111", 1006, 111),
-("CSE 111", 1007, 111),
-("CSE 111", 1008, 111),
-("CSE 111", 1009, 111),
-("CSE 155", 1002, 155),
+insert into professor(p_name, p_class, p_ID)
+select a_name, "SCI-241", a_ID
+from account
+where a_type = "prof" and 
+a_name = "tango";
 
-INSERT INTO classCatalog(cla_name,cla_cID)
-VALUES ("CSE 111", 111),
-("CSE 150", 150),
-("CSE 160", 160),
-("CSE 120", 120),
-("CSE 175", 175);
+insert into professor(p_name, p_class, p_ID)
+select a_name, "Math-321", a_ID
+from account
+where a_type = "prof" and 
+a_name = "Nick";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "Math-485", a_ID
+from account
+where a_type = "prof" and 
+a_name = "James";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "Wri-871", a_ID
+from account
+where a_type = "prof" and 
+a_name = "Vincent";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "SCI-964", a_ID
+from account
+where a_type = "prof" and 
+a_name = "Jason";
+
+/*populate classCatalog*/
+insert into classCatalog(cla_name, cla_ID, cla_cID)
+select p_class, p_ID, ABS(RANDOM()) % (99- 10) + 10 
+from professor;
+
+/*putting prof in the class*/
+insert into classRoster(cl_name,cl_ID,cl_cID)
+select p_name, p_ID, cla_cID
+from professor, classcatalog
+where p_class = cla_name AND
+p_ID = cla_ID;
+
+/*putting students in class*/ 
+insert into classRoster(cl_name, cl_ID, cl_cID) values 
+("brian", 336, 50),
+("brian", 336, 17),
+("brian", 336, 72),
+("minh", 611, 17),
+("minh", 611, 72),
+("tang", 732, 86),
+("tang", 732, 60),
+("tang", 732, 19),
+("aye", 453, 21),
+("potato", 574, 50),
+("heyo", 416, 86),
+("pringles", 916, 21),
+("lays", 112, 60);
+
+
+/*creating initial timestamp of folder access*/
+insert into classFolder (class_name, class_cID, class_lTIme)
+select cla_name, cla_cID, dateTime()
+from classcatalog;
+
+/*initialized first doc for each class*/
+insert into notePages (n_docName, n_timeStamp, n_cID, n_content, n_nID) 
+SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
+from classFolder;
+
