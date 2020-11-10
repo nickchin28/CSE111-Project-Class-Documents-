@@ -76,3 +76,9 @@ insert into classFolder (class_name, class_cID, class_lTIme)
 select cla_name, cl_cID, dateTime()
 from classRoster, classcatalog
 where cl_cID = cla_cID;
+
+/*initialized first doc for each class*/
+insert into notePages (n_docName, n_timeStamp, n_cID, n_content) 
+SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION"
+from classFolder;
+

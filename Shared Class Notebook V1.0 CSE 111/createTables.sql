@@ -13,12 +13,6 @@ CREATE TABLE student(
             s_year INT not null);
 drop table student;
 
-CREATE TABLE classesRegistered(
-            reg_cName VARCHAR(50) not null,
-            reg_cID INT not null,
-            reg_ID INT not null);
-drop table classesRegistered;
-
 CREATE TABLE classFolder(
             class_name VARCHAR(50) not null,
             class_cID INT not null,
