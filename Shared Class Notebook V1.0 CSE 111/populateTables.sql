@@ -13,10 +13,13 @@ insert into account (a_name, a_pass, a_ID, a_type) values
 ("tango","mango", ABS(RANDOM()) % (999 - 100) + 100, "prof");
 
 insert into account (a_name, a_pass, a_ID, a_type) values 
-("Vincent","Chin", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
-("Nick","Zhu", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
-("Jason","Nguyen", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
-("James","Mac", ABS(RANDOM()) % (999 - 100) + 100, "prof");
+("boba","poba", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("hay","lay", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("noaa","faa", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("dot","lot", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("cold","hot", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("ama","zon", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
+("data","base", ABS(RANDOM()) % (999 - 100) + 100, "prof");
 
 
 /*populate student*/
@@ -48,25 +51,56 @@ insert into professor(p_name, p_class, p_ID)
 select a_name, "Math-321", a_ID
 from account
 where a_type = "prof" and 
-a_name = "Nick";
+a_name = "boba";
 
 insert into professor(p_name, p_class, p_ID)
 select a_name, "Math-485", a_ID
 from account
 where a_type = "prof" and 
-a_name = "James";
+a_name = "hay";
 
 insert into professor(p_name, p_class, p_ID)
 select a_name, "Wri-871", a_ID
 from account
 where a_type = "prof" and 
-a_name = "Vincent";
+a_name = "noaa";
 
 insert into professor(p_name, p_class, p_ID)
 select a_name, "SCI-964", a_ID
 from account
 where a_type = "prof" and 
-a_name = "Jason";
+a_name = "dot";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "CSE-120", a_ID
+from account
+where a_type = "prof" and 
+a_name = "cold";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "CSE-111", a_ID
+from account
+where a_type = "prof" and 
+a_name = "ama";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "CSE-140", a_ID
+from account
+where a_type = "prof" and 
+a_name = "data";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "CSE-175", a_ID
+from account
+where a_type = "prof" and 
+a_name = "ama";
+
+insert into professor(p_name, p_class, p_ID)
+select a_name, "CSE-150", a_ID
+from account
+where a_type = "prof" and 
+a_name = "ama";
+
 
 /*populate classCatalog*/
 insert into classCatalog(cla_name, cla_ID, cla_cID)
@@ -82,19 +116,26 @@ p_ID = cla_ID;
 
 /*putting students in class*/ 
 insert into classRoster(cl_name, cl_ID, cl_cID) values 
-("brian", 336, 50),
-("brian", 336, 17),
-("brian", 336, 72),
-("minh", 611, 17),
-("minh", 611, 72),
-("tang", 732, 86),
-("tang", 732, 60),
-("tang", 732, 19),
-("aye", 453, 21),
-("potato", 574, 50),
-("heyo", 416, 86),
-("pringles", 916, 21),
-("lays", 112, 60);
+("brian", 878, 43),
+("brian", 878, 14),
+("brian", 878, 78),
+("minh", 306, 47),
+("minh", 306, 30),
+("tang", 843, 25),
+("tang", 843, 27),
+("tang", 843, 59),
+("aye", 589, 35),
+("aye", 589, 17),
+("potato", 728, 43),
+("heyo", 673, 14),
+("heyo", 673, 17),
+("pringles", 642, 78),
+("pringles", 642, 47),
+("pringles", 642, 30),
+("lays",277,25),
+("lays",277,27),
+("lays",277,59),
+("lays",277,35);
 
 
 /*creating initial timestamp of folder access*/
