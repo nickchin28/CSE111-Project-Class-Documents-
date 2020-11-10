@@ -24,7 +24,8 @@ CREATE TABLE notePages(
             n_docName VARCHAR(50) not null,
             n_timeStamp TEXT not null,
             n_cID INT not null,
-            n_content TEXT not null);
+            n_content TEXT not null,
+            n_nID int not null);
 drop table notePages;
 
 CREATE TABLE professor(
@@ -43,4 +44,4 @@ CREATE TABLE classCatalog(
             cla_name VARCHAR(50) not null,
             cla_cID INT not null,
             cla_ID int not null);    
-DROP TABLE classCatalog    ;       
+DROP TABLE classCatalog;       
