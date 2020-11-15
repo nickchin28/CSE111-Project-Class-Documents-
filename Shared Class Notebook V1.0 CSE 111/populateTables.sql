@@ -154,3 +154,11 @@ SELECT DISTINCT p_name, cla_cID , p_ID, "CSE"
 FROM professor, classCatalog
 WHERE p_ID = cla_ID
     AND p_class LIKE "CSE%";
+
+insert into files (f_docName, f_timeStamp, f_cID, f_content, f_nID) 
+SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
+from classFolder;
+
+insert into images (i_docName, i_timeStamp, i_cID, i_content, i_nID) 
+SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
+from classFolder;
