@@ -45,3 +45,27 @@ CREATE TABLE classCatalog(
             cla_cID INT not null,
             cla_ID int not null);    
 DROP TABLE classCatalog;       
+
+CREATE TABLE department(
+            d_name VARCHAR(50) not null,
+            d_cID INT not null,
+            d_ID int not null,
+            d_dept VARCHAR(50) not null);   
+
+DROP TABLE department;    
+
+CREATE TABLE images(
+            i_docName VARCHAR(50) not null,
+            i_timeStamp TEXT not null,
+            i_cID INT not null,
+            i_content TEXT not null,
+            i_nID int not null);   
+
+CREATE TABLE files(
+            f_docName VARCHAR(50) not null,
+            f_timeStamp TEXT not null,
+            f_cID INT not null,
+            f_content TEXT not null,
+            f_nID int not null);   
+            
+            
