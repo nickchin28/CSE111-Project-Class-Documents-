@@ -102,6 +102,7 @@ where a_type = "prof" and
 a_name = "ama";
 
 
+
 /*populate classCatalog*/
 insert into classCatalog(cla_name, cla_ID, cla_cID)
 select p_class, p_ID, ABS(RANDOM()) % (99- 10) + 10 
@@ -116,26 +117,26 @@ p_ID = cla_ID;
 
 /*putting students in class*/ 
 insert into classRoster(cl_name, cl_ID, cl_cID) values 
-("brian", 878, 43),
-("brian", 878, 14),
-("brian", 878, 78),
-("minh", 306, 47),
-("minh", 306, 30),
-("tang", 843, 25),
-("tang", 843, 27),
-("tang", 843, 59),
-("aye", 589, 35),
-("aye", 589, 17),
-("potato", 728, 43),
-("heyo", 673, 14),
-("heyo", 673, 17),
-("pringles", 642, 78),
-("pringles", 642, 47),
-("pringles", 642, 30),
-("lays",277,25),
-("lays",277,27),
-("lays",277,59),
-("lays",277,35);
+("brian", 825, 95),
+("brian", 825, 98),
+("brian", 825, 70),
+("minh", 860, 80),
+("minh", 860, 83),
+("tang", 702, 90),
+("tang", 702, 77),
+("tang", 702, 95),
+("aye", 982, 70),
+("aye", 982, 64),
+("potato", 492, 85),
+("heyo", 689, 29),
+("heyo", 689, 95),
+("pringles", 766, 98),
+("pringles", 766, 70),
+("pringles", 766, 80),
+("lays",770,83),
+("lays",770,90),
+("lays",770,77),
+("lays",770,95);
 
 
 /*creating initial timestamp of folder access*/
@@ -148,3 +149,8 @@ insert into notePages (n_docName, n_timeStamp, n_cID, n_content, n_nID)
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
 from classFolder;
 
+INSERT into department (d_name, d_cID, d_ID, d_dept)
+SELECT DISTINCT p_name, cla_cID , p_ID, "CSE"
+FROM professor, classCatalog
+WHERE p_ID = cla_ID
+    AND p_class LIKE "CSE%";
