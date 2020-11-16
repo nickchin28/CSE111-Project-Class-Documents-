@@ -162,3 +162,13 @@ from classFolder;
 insert into images (i_docName, i_timeStamp, i_cID, i_content, i_nID) 
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
 from classFolder;
+
+insert into profClass (pc_classname, pc_ID) 
+SELECT DISTINCT p_class, p_ID
+from professor JOIN classCatalog
+ON p_ID = cla_ID;
+
+insert into rosterToCatalog (rtc_name, rtc_className, rtc_cID ) 
+SELECT cl_name, cla_name, cl_cID 
+from classRoster JOIN classCatalog
+ON cl_cID = cla_cID;
