@@ -67,5 +67,17 @@ CREATE TABLE files(
             f_cID INT not null,
             f_content TEXT not null,
             f_nID int not null);   
+
+CREATE TABLE profClass(
+            pc_classname VARCHAR(50) not null,
+            pc_ID INT not null);     
+
+DROP TABLE profClass;            
             
+CREATE TABLE rosterToCatalog(
+            rtc_name VARCHAR(50) not null,
+            rtc_className VARCHAR(50) not null,
+            rtc_cID INT not null);     
+                   
+DROP TABLE rosterToCatalog;                   
             
