@@ -88,7 +88,36 @@ def profAccess(_conn, user, p_ID):
         
         if choice == "2":
             print("Success")
-    
+            cla = ("select p_class from professor where p_name = ? and p_ID = ?")
+            cursor.execute(cla, [user, p_ID])
+            okay = cursor.fetchall()
+            for i in okay:
+                print("Looking at class roster for: " + i[0])
+                print("\n")
+                ros = ("select cl_name, cl_ID from classRoster, classCatalog where cla_Name = ? and cla_cID = cl_cID ")
+                cursor.execute(ros, [i[0]])
+                ter = cursor.fetchall()
+                l = '{:<10}{:}{:>15}'.format("NAME", "|", "STUDENT ID")
+                print(l)
+                print("----------------------------")
+                for i in ter:
+                    name = i[0]
+                    ID = i[1]
+                    l = '{:<10}{:}{:>10}'.format(name, "|", ID)
+                    print(l)
+        
+        if choice == "3":
+            print("success")
+            
+        if choice == "4":
+            print("success")
+            ros = ("select cl_cID from classRoster, classCatalog where cla_Name = ? and cla_cID = cl_cID ")
+            cursor.execute(ros, [i[0]])
+            ter = cursor.fetchall()
+            
+                    
+                    
+                    
 
 
 def main():
