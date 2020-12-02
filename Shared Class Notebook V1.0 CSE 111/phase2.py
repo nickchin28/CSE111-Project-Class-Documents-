@@ -76,34 +76,53 @@ def classList(_conn, user, ID, typ):
     you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
     cursor.execute(you, [user])
     okay = cursor.fetchall()
+    claID = []
     for i in okay:
         cName = i[0]
         cID = i[1]
         l = '{:}{:}{:}'.format(cName, "|", cID)
+        claID.append(cID)
         print(l)
     
-    choose = input("Please Select a Class (type classID): ")
-    for i in okay:
-        cId = i[1]
-        if choose == cId and typ == "stu":
-            stuAccess(_conn, user, ID, cId)
+    print(claID)
+    choose = int(input("Please Select a Class (type classID): "))
+    for i in range(len(claID)):
+        if choose == claID[i]:
+            stuAccess(_conn, user, ID, claID[i])  
 
-
+def classNotes(_conn, user, p_ID, c_ID):
+    with sqlite3.connect("scnDatabase.sqlite") as data:
+        cursor = data.cursor()
+    while user:
+        print(" ")
+        print("1. Add Notes")
+        print("2. Edit Notes")
+        print("3. View specific person notes")
+        print("4. Exit from notes")
+        choice = input("What would you like to do? ")
+        print(" ")
+        
+        if choice == 1:
+            name = input("Name of new of document: ")
+            content = input("Start writing something: ")
+            image = input("Would you like to include an image (y/n): ")
+            
+            
+                                  
 def stuAccess(_conn, user, p_ID, c_ID):
     with sqlite3.connect("scnDatabase.sqlite") as data:
         cursor = data.cursor()
     while user:
         print(" ")
         print("1. Show class roster")
-        print("2. Check Registration requests")
-        print("3. Class Notes")
-        print("4. Change class view")
-        print("5. Logout")
+        print("2. Class Notes")
+        print("3. Change class view")
+        print("4. Logout")
         choice = input("What would you like to do? ")
         print(" ")
         
         if choice == "1":
-            print("success")
+            print(" ")
             cla = ("select cl_name from classRoster where cl_cId = ?")
             cursor.execute(cla, [c_ID])
             okay = cursor.fetchall()
@@ -115,30 +134,16 @@ def stuAccess(_conn, user, p_ID, c_ID):
             
         
         if choice == "2":
-            print("Success")
-            cla = ("select cl_name from classRoster where p_name = ? and p_ID = ?")
+            print(" ")
+            note = ("select cl_name from classRoster where p_name = ? and p_ID = ?")
             cursor.execute(cla, [user, p_ID])
             okay = cursor.fetchall()
-            for i in okay:
-                print("Looking at class roster for: " + i[0])
-                print("\n")
-                ros = ("select cl_name, cl_ID from classRoster, classCatalog where cla_Name = ? and cla_cID = cl_cID ")
-                cursor.execute(ros, [i[0]])
-                ter = cursor.fetchall()
-                l = '{:<10}{:}{:>15}'.format("NAME", "|", "STUDENT ID")
-                print(l)
-                print("----------------------------")
-                for i in ter:
-                    name = i[0]
-                    ID = i[1]
-                    l = '{:<10}{:}{:>10}'.format(name, "|", ID)
-                    print(l)
-        
+            
         if choice == "3":
             print("success")
             
         if choice == "4":
-            print("success")
+            print(" ")
             ote = ("select * from notePages where n_cID = (Select cl_cID from classRoster where cl_ID = ?)")
             cursor.execute(ote, [p_ID])
             note = cursor.fetchall()
@@ -154,7 +159,7 @@ def stuAccess(_conn, user, p_ID, c_ID):
                 print(l)
         
         if choice == "5":
-            print("success")
+            print(" ")
             los = ("select * from rosterToCatalog")
             cursor.execute(los)
             note = cursor.fetchall()
