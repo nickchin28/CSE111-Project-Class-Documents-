@@ -97,7 +97,7 @@ def classNotes(_conn, user, p_ID, c_ID):
         print(" ")
         print("1. Add Notes")
         print("2. Edit Notes")
-        print("3. View specific person notes")
+        print("3. View specific notes")
         print("4. Exit from notes")
         choice = input("What would you like to do? ")
         print(" ")
@@ -106,9 +106,47 @@ def classNotes(_conn, user, p_ID, c_ID):
             name = input("Name of new of document: ")
             content = input("Start writing something: ")
             image = input("Would you like to include an image (y/n): ")
+            sql = """INSERT into notepages (n_docName,n_timeStamp, n_content, n_nID)
+                    VALUES (?, dateTime(), ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+            cursor.execute(sql, name,content )
+            print("success")
+            if image == ("y" or "Y") :
+               iname = input("Please input image name:")
+               icontent = input ("Please input image content: ")
+            sql = """INSERT into images (i_docName,i_timeStamp, i_content, i_nID)
+                    VALUES (?, dateTime(), ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+            cursor.execute(sql, iname, icontent)
+            print("success")
             
-            
-                                  
+        
+        if choice == 2:
+            neditID = input("Which note would you like to edit: ")
+            name = input("Change name of document: ")
+            content = input("Start writing something new: ")
+            sql = """UPDATE notepages 
+                    SET n_content = ?, 
+                    n_timeStamp = dateTime(),
+                    n_docName = ?
+                    WHERE n_nID = ?;"""
+            cursor.execute(sql, content , name , neditID )
+
+        if choice == 3:
+            nID = ("Input the note ID: ")
+            sql = """SELECT n_docName, n_timeStamp, n_content , n_cID, n_nID
+                        FROM notePages 
+                        WHERE n_nID = ? ;"""
+            cursor.execute(sql, nID)
+            row = cursor.fetchall
+            header = '{:>10} {:<40} {:>10} {:>10} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+            print(header)
+
+            for row in rows:
+                data = '\n{:>10} {:<40} {:>10} {:>10} {:>10}'.format(row[0],row[1], row[2], row[3], row[4])
+                print(data)
+
+        if choice == 4:        
+            print("sucess")
+
 def stuAccess(_conn, user, p_ID, c_ID):
     with sqlite3.connect("scnDatabase.sqlite") as data:
         cursor = data.cursor()
