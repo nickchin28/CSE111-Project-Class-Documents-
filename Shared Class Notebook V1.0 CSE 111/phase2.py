@@ -140,12 +140,12 @@ def classNotes(_conn, user, s_ID, c_ID):
                         FROM notePages
                         WHERE n_nID = ? ;"""
             cursor.execute(sql, nID)
-            row = cursor.fetchall
-            header = '{:>10} {:<40} {:>10} {:>10} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+            rows = cursor.fetchall
+            header = '{:>10}{:} {:<40} {:}{:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
             print(header)
 
             for row in rows:
-                data = '\n{:>10} {:<40} {:>10} {:>10} {:>10}'.format(row[0], row[1], row[2], row[3], row[4])
+                data = '\n{:>10}{:} {:<40} {:}{:>10}{:} {:>10}{:} {:>10}'.format(row[0],"|", row[1],"|", row[2],"|", row[3],"|", row[4])
                 print(data)
 
         if choice == 4:     
