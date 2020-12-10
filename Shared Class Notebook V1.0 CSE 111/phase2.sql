@@ -162,3 +162,18 @@ WHERE s_ID IN (SELECT s_ID
     WHERE s_ID = cl_ID
     AND cl_cID = cla_cID
     AND cla_name LIKE "CSE%");
+
+
+select cla_name, cla_cID 
+from classCatalog, classRoster 
+where cl_name = "mang" and 
+cl_cID = cla_cID
+group by cla_cID;
+
+select p_class from professor where p_name = "ama" and p_ID = 256;select cla_name, cl_name, cl_ID from classRoster, classCatalog where cla_Name = 'CSE-111' and cla_cID = cl_cID; 
+
+select cla_name, cl_name, cl_ID, a_type 
+from classRoster, classCatalog,account 
+where cla_Name = "CSE-111" and 
+cla_cID = cl_cID and 
+cl_ID = a_ID;
