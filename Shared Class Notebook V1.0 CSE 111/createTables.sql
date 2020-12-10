@@ -45,13 +45,7 @@ drop table classRoster;
 
 CREATE TABLE classCatalog(
             cla_name VARCHAR(50) not null,
-<<<<<<< HEAD
-            cla_cID INT not null,
-            cla_ID int not null,
-            constraint cla unique(cla_cID));    
-=======
             cla_cID INT not null);    
->>>>>>> 6b9417c90b2ecc0815fd11c5c757a799fa0f3165
 DROP TABLE classCatalog;       
 
 CREATE TABLE department(
@@ -77,22 +71,6 @@ CREATE TABLE files(
             f_content TEXT not null,
             f_nID int not null);   
 
-<<<<<<< HEAD
-DROP TABLE files;
-
-CREATE TABLE profClass(
-            pc_classname VARCHAR(50) not null,
-            pc_ID INT not null);    
-
-DROP TABLE profClass; 
-
-DROP TABLE profClass;            
-            
-CREATE TABLE rosterToCatalog(
-            rtc_id int not null,
-            rtc_className VARCHAR(50) not null,
-            rtc_cID INT not null);     
-=======
 CREATE TABLE request(
             r_Name VARCHAR(50) not null,
             r_ID INT not null,
@@ -115,7 +93,6 @@ CREATE TABLE proDep(
             pd_ID INT not null,
             pd_cName VARCHAR(50) not null,
             pd_depart VARCHAR(50) not null);     
->>>>>>> 6b9417c90b2ecc0815fd11c5c757a799fa0f3165
                    
 DROP TABLE proDep;
             
