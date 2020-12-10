@@ -71,8 +71,8 @@ def login(_conn):
 
 
 def classList(_conn, user, ID, typ):
-    with sqlite3.connect("scnDatabase.sqlite") as data:
-        cursor = data.cursor()
+    
+    cursor = _conn.cursor()
     
     you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
     cursor.execute(you, [user])
@@ -98,8 +98,9 @@ def classList(_conn, user, ID, typ):
 
 
 def classNotes(_conn, user, s_ID, c_ID):
-    with sqlite3.connect("scnDatabase.sqlite") as data:
-        cursor = data.cursor()
+    
+    cursor = _conn.cursor()
+    
     while user:
         print(" ")
         print("1. Add Notes")
@@ -156,8 +157,9 @@ def classNotes(_conn, user, s_ID, c_ID):
             
                                   
 def stuAccess(_conn, user, s_ID, c_ID):
-    with sqlite3.connect("scnDatabase.sqlite") as data:
-        cursor = data.cursor()
+    
+    cursor = _conn.cursor()
+    
     while user:
         
         wel = ("select cla_name from classCatalog where cla_cID = ?")
@@ -229,6 +231,7 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName, t_pID, t_Action) values (?,?,?,?,?,?)"
                     cursor.execute(sql, [user, s_ID, c_ID, pName, "Add"])
                     cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "Add"])
+                    _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
             if choice == 2:
                 you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
@@ -254,6 +257,7 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName,t_pID, t_Action) values (?,?,?,?,?,?)"
                     cursor.execute(sql, [user, s_ID, c_ID, pName, "delete"])
                     cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "delete"])
+                    _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
             
             
@@ -263,8 +267,8 @@ def stuAccess(_conn, user, s_ID, c_ID):
 
 
 def requests(_conn, user, c_ID, ID):
-    with sqlite3.connect("scnDatabase.sqlite") as data:
-        cursor = data.cursor()
+    
+    cursor = _conn.cursor()
     
     io = "select cla_name from classCatalog where cla_cID = ?"
     cursor.execute(io, [c_ID])
@@ -356,6 +360,7 @@ def judgement(_conn, okay):
             cur.execute(sql, [sName, ID, cID])
             cur.execute(ls, [ID, cID])
             cur.execute(sl, [ID, cID])
+            _conn.commit()
             print("success")
     
     if choice == "2" or choice == "Delete":      
@@ -367,13 +372,15 @@ def judgement(_conn, okay):
             
             ls = "delete from ticket where t_ID = ? and t_cID = ?"
             sl = "delete from request where r_ID = ? and r_cID = ?"
-            cursor.execute(ls, [sID, cID])
-            cursor.execute(sl, [sID, cID])
+            cur.execute(ls, [sID, cID])
+            cur.execute(sl, [sID, cID])
+            _conn.commit()
             print("success")
     
+    
 def profAccess(_conn, user, p_ID, typ):
-    with sqlite3.connect("scnDatabase.sqlite") as data:
-        cursor = data.cursor()
+    
+    cursor = _conn.cursor()
         
     while user:
         print("1. What classes do I teach?")
