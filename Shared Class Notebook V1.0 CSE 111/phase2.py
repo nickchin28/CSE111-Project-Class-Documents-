@@ -67,7 +67,7 @@ def login(_conn):
             again = input("Would you like logging in again? (y/n): ")
             if again.lower() == "n":
                 print("Exited")
-                break
+                exit()
 
 
 def classList(_conn, user, ID, typ):
@@ -93,6 +93,8 @@ def classList(_conn, user, ID, typ):
         if choose == claID[i]:
             if(typ == 'stu'):
                 stuAccess(_conn, user, ID, claID[i])
+            if(typ == 'prof'):
+                requests(_conn, user, claID[i], ID)
 
 
 def classNotes(_conn, user, s_ID, c_ID):
@@ -107,23 +109,23 @@ def classNotes(_conn, user, s_ID, c_ID):
         choice = input("What would you like to do? ")
         print(" ")
         
-        if choice == 1:
+        if choice == "1":
             name = input("Name of new of document: ")
             content = input("Start writing something: ")
             image = input("Would you like to include an image (y/n): ")
-            sql = """INSERT into notepages (n_docName,n_timeStamp, n_content, n_nID)
-                    VALUES (?, dateTime(), ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
-            cursor.execute(sql, name, content)
+            sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
+                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+            cursor.execute(sql, [name, c_ID, content])
             print("success")
             if image == ("y" or "Y"):
                 iname = input("Please input image name:")
                 icontent = input("Please input image content: ")
-            sql = """INSERT into images (i_docName,i_timeStamp, i_content, i_nID)
-                    VALUES (?, dateTime(), ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
-            cursor.execute(sql, iname, icontent)
-            print("success")
+                sql = """INSERT into images (i_docName,i_timeStamp, i_cID i_content, i_nID)
+                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+                cursor.execute(sql, [iname, c_ID, icontent])
+                print("success")
             
-        if choice == 2:
+        if choice == "2":
             neditID = input("Which note would you like to edit: ")
             name = input("Change name of document: ")
             content = input("Start writing something new: ")
@@ -132,23 +134,23 @@ def classNotes(_conn, user, s_ID, c_ID):
                     n_timeStamp = dateTime(),
                     n_docName = ?
                     WHERE n_nID = ?;"""
-            cursor.execute(sql, content, name, neditID)
+            cursor.execute(sql, [content, name, neditID])
 
-        if choice == 3:
+        if choice == "3":
             nID = input("Input the note ID: ")
             sql = """SELECT n_docName, n_timeStamp, n_content , n_cID, n_nID
                         FROM notePages
                         WHERE n_nID = ? ;"""
-            cursor.execute(sql, nID)
-            rows = cursor.fetchall
-            header = '{:>10}{:} {:<40} {:}{:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+            cursor.execute(sql, [nID])
+            row = cursor.fetchall
+            header = '{:>10} {:<40} {:>10} {:>10} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
             print(header)
 
             for row in rows:
-                data = '\n{:>10}{:} {:<40} {:}{:>10}{:} {:>10}{:} {:>10}'.format(row[0],"|", row[1],"|", row[2],"|", row[3],"|", row[4])
+                data = '\n{:>10} {:<40} {:>10} {:>10} {:>10}'.format(row[0], row[1], row[2], row[3], row[4])
                 print(data)
 
-        if choice == 4:     
+        if choice == "4":     
             print("sucess")
             stuAccess(_conn, user, s_ID, c_ID)
             
@@ -203,30 +205,116 @@ def stuAccess(_conn, user, s_ID, c_ID):
         if choice == "4":
             login(_conn)
 
-def requests(_conn, user, c_ID):
+
+def requests(_conn, user, c_ID, ID):
     with sqlite3.connect("scnDatabase.sqlite") as data:
         cursor = data.cursor()
     
+    io = "select cla_name from classCatalog where cla_cID = ?"
+    cursor.execute(io, [c_ID])
+    okay = cursor.fetchall()
+    cla = []
+    
+    for i in okay:
+        name = i[0]
+        cla.append(name)
+        
     while user:
-        print("1. Look at adding requests")
-        print("2. Look at withdraw requests")
-        print("3. Exit from requests")
+        print("Looking at tickets for: " + cla[0])
+        print("1. View adding requests")
+        print("2. View withdraw requests")
+        print("3. Approve/Decline requests")
+        print("4. Exit from requests")
         choice = input("Choose an option: ")
         
-        if choice == 1:
+        if choice == "1":
             print(" ")
-            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'a%' ")
+            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'ADD' ")
             cursor.execute(add, [user, c_ID])
             okay = cursor.fetchall()
-            print("Requests for : ")
+            l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format("Student Name", "|", "Student ID", "|", "Class ID", "|", "Action")
+            print(l)
             for i in okay:
-                print(i[0])
-    
+                sName = i[0]
+                sID = i[1]
+                cID = i[2]
+                action = i[3]
+                l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format(sName, "|", sID, "|", cID, "|", action)
+                print(l)
+            print(" ")
+
+        if choice == 2:
+            print(" ")
+            dele = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'Delete' ")
+            cursor.execute(dele, [user, c_ID])
+            okay = cursor.fetchall()
+            print("Requests for: ")
+            for i in okay:
+                sName = i[0]
+                sID = i[1]
+                cID = i[2]
+                action = i[3]
+                l = '{:<10}{:}{:>15}{:}{:>15}{:}{:}'.format(sName, "|", sID, "|", cID, "|", action)
+                print(l)
+            print(" ")
+
+        if choice == "3":
+            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? ")
+            cursor.execute(add, [user, c_ID])
+            okay = cursor.fetchall()
+            l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format("Student Name", "|", "Student ID", "|", "Class ID", "|", "Action")
+            print(l)
+            for i in okay:
+                sName = i[0]
+                sID = i[1]
+                cID = i[2]
+                action = i[3]
+                l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format(sName, "|", sID, "|", cID, "|", action)
+                print(l)
+            judgement(_conn, okay)
             print(" ")
         
+        if choice == "4":
+            print(" ")
+            typ = "prof"
+            profAccess(_conn, user, ID, typ) 
+ 
+        
+def judgement(_conn, okay):
     
+    cur = _conn.cursor()
+    print("1. Approve")
+    print("2. Deny")
+    choice = input("Approve or Deny: ")
     
-         
+    if choice == "1" or choice == "Approve":       
+        ID = int(input("Student ID of Ticket: "))
+        for i in okay:
+            sName = i[0]
+            sID = i[1]
+            cID = i[2]
+
+            sql = "insert into classRoster(cl_name, cl_ID, cl_cID) values (?, ?, ?)"
+            ls = "delete from ticket where t_ID = ? and t_cID = ?"
+            sl = "delete from request where r_ID = ? and r_cID = ?"
+            cur.execute(sql, [sName, ID, cID])
+            cur.execute(ls, [ID, cID])
+            cur.execute(sl, [ID, cID])
+            print("success")
+    
+    if choice == "2" or choice == "Delete":      
+        ID = input("Student ID of Ticket: ")
+        for i in okay:
+            sName = i[0]
+            sID = i[1]
+            cID = i[2]
+            
+            ls = "delete from ticket where t_ID = ? and t_cID = ?"
+            sl = "delete from request where r_ID = ? and r_cID = ?"
+            cursor.execute(ls, [sID, cID])
+            cursor.execute(sl, [sID, cID])
+            print("success")
+    
 def profAccess(_conn, user, p_ID, typ):
     with sqlite3.connect("scnDatabase.sqlite") as data:
         cursor = data.cursor()
@@ -275,6 +363,8 @@ def profAccess(_conn, user, p_ID, typ):
         
         if choice == "3":
             print(" ")
+            classList(_conn, user, p_ID, typ)
+            
             
         if choice == "4":
             print(" ")
@@ -318,6 +408,7 @@ def main():
     conn = openConnection(database)
     with conn:
         login(conn)
+        judgement(conn)
 
     closeConnection(conn, database)
 
