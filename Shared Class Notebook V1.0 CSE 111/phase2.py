@@ -145,14 +145,19 @@ def classNotes(_conn, user, s_ID, c_ID):
             content = input("Start writing something: ")
             #image = input("Would you like to include an image (y/n): ")
             sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
-                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 )"""
             cursor.execute(sql, [name, c_ID, content])
+            _conn.commit()
             n_nID = """ SELECT n_nID FROM notePages where n_content = ? and n_docName = ? """
-            cursor.execute(n_nID, [content,name])
-            sql = """INSERT into files (n_docName,n_timeStamp, n_cID, n_content, n_nID)
-                    VALUES (?, dateTime(), ?, ?, ?);"""
-            cursor.execute(sql, [name, c_ID, content, n_nID])
-            print("success")
+            cursor.execute(n_nID, [content, name])
+            rows = cursor.fetchall()
+            for i in rows:
+                nID = i[0]
+                sql = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                        VALUES (?, dateTime(), ?, ?, ?)"""
+                cursor.execute(sql, [name, c_ID, content, nID])
+                _conn.commit()
+                print("success")
             #if image == ("y" or "Y"):
              #   iname = input("Please input image name:")
               #  icontent = input("Please input image content: ")
@@ -166,41 +171,45 @@ def classNotes(_conn, user, s_ID, c_ID):
             change = input("Would you like to change the name of the note? [y/n] ")
             if change == ("y" or "Y"):
                 name = input("Change name of document: ")
-                sql = """UPDATE notepages 
+                sql = """UPDATE notePages 
                     SET n_docName = ?,
-                    n_timeStamp = dateTime(),
-                    WHERE n_nID = ?;"""
+                    n_timeStamp = dateTime()
+                    WHERE n_nID = ?"""
                 cursor.execute(sql, [name, neditID])
+                _conn.commit()
                 cid = """select n_cID, n_content
                     from notePages
-                    WHERE n_nID = ?;"""
+                    WHERE n_nID = ?"""
                 cursor.execute(cid, [neditID])
 
                 sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
-                    Values( ?, dateTime(), ?, ?, ?) ;"""
+                    Values( ?, dateTime(), ?, ?, ?) """
                 cursor.execute(sql1, [name, cid[0], cid[1], neditID])
+                _conn.commit()
 
             change2 = input("Would you like to change the contents of the note? [y/n] ")
             if change2 == ("y" or "Y"):
                 content = input("Start writing something new: ")
-            sql = """UPDATE notepages 
-                    SET n_content = ?, 
-                    n_timeStamp = dateTime(),
-                    WHERE n_nID = ?;"""
-            cursor.execute(sql, [content,neditID])
-            cid1 = """select n_docName, n_cID
+                sql = """UPDATE notePages 
+                    SET n_content = ?,
+                    n_timeStamp = dateTime()
+                    WHERE n_nID = ?"""
+                cursor.execute(sql, [content, neditID])
+                _conn.commit()
+                cid1 = """select n_docName, n_cID
                     from notePages
                     WHERE n_nID = ?;"""
-            cursor.execute(cid1, [neditID])
-            sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
-                    Values( ?, dateTime(), ?, ?, ?) ;"""
-            cursor.execute(sql1, [cid1[0],cid1[1], content, neditID])
+                cursor.execute(cid1, [neditID])
+                sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                    Values( ?, dateTime(), ?, ?, ?) """
+                cursor.execute(sql1, [cid1[0],cid1[1], content, neditID])
+                _conn.commit()
 
         if choice == "3":
             nID = input("Input the note ID: ")
             sql = """SELECT n_docName, n_timeStamp, n_content , n_cID, n_nID
                         FROM notePages
-                        WHERE n_nID = ? ;"""
+                        WHERE n_nID = ?"""
             cursor.execute(sql, [nID])
             rows = cursor.fetchall()
             header = '{:>10} {:} {:<40}{:} {:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
@@ -254,11 +263,13 @@ def profclassNotes(_conn, user, c_ID, p_ID, typ):
             sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
                     VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
             cursor.execute(sql, [name, c_ID, content])
+            _conn.commit()
             n_nID = """ SELECT n_nID FROM notePages where n_content = ? and n_docName = ? """
             cursor.execute(n_nID, [content,name])
             sql = """INSERT into files (n_docName,n_timeStamp, n_cID, n_content, n_nID)
                     VALUES (?, dateTime(), ?, ?, ?);"""
             cursor.execute(sql, [name, c_ID, content, n_nID])
+            _conn.commit()
             print("success")
             #if image == ("y" or "Y"):
              #   iname = input("Please input image name:")
@@ -278,6 +289,7 @@ def profclassNotes(_conn, user, c_ID, p_ID, typ):
                     n_timeStamp = dateTime(),
                     WHERE n_nID = ?;"""
                 cursor.execute(sql, [name, neditID])
+                _conn.commit()
                 cid = """select n_cID, n_content
                     from notePages
                     WHERE n_nID = ?;"""
@@ -286,6 +298,7 @@ def profclassNotes(_conn, user, c_ID, p_ID, typ):
                 sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
                     Values( ?, dateTime(), ?, ?, ?) ;"""
                 cursor.execute(sql1, [name, cid[0], cid[1], neditID])
+                _conn.commit()
 
             change2 = input("Would you like to change the contents of the note? [y/n] ")
             if change2 == ("y" or "Y"):
@@ -295,6 +308,7 @@ def profclassNotes(_conn, user, c_ID, p_ID, typ):
                     n_timeStamp = dateTime(),
                     WHERE n_nID = ?;"""
             cursor.execute(sql, [content,neditID])
+            _conn.commit()
             cid1 = """select n_docName, n_cID
                     from notePages
                     WHERE n_nID = ?;"""
@@ -302,6 +316,7 @@ def profclassNotes(_conn, user, c_ID, p_ID, typ):
             sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
                     Values( ?, dateTime(), ?, ?, ?) ;"""
             cursor.execute(sql1, [cid1[0],cid1[1], content, neditID])
+            _conn.commit()
 
         if choice == "3":
             nID = input("Input the note ID: ")
@@ -379,8 +394,14 @@ def stuAccess(_conn, user, s_ID, c_ID):
             print(" ")
             choice = int(input("Adding(1) or Withdrawing(2)?:"))
             if choice == 1:            
-                los = ("select * from classCatalog group by cla_name")
-                cursor.execute(los)
+                los = ("""select * 
+                       from classCatalog
+                       where cla_cID != (select cla_cID 
+                                        from classCatalog, classRoster 
+                                        where cl_ID = ? 
+                                        and cl_cID = cla_cID) 
+                       group by cla_name""")
+                cursor.execute(los, [s_ID])
                 note = cursor.fetchall()
                 l = '{:15}{:}{:12}'.format("Class Name", "|", "Class ID")
                 print(l)
@@ -403,8 +424,9 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     pID = i[1]
                     sql = "insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) values (?,?,?,?,?)"
                     sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName, t_pID, t_Action) values (?,?,?,?,?,?)"
-                    cursor.execute(sql, [user, s_ID, c_ID, pName, "Add"])
-                    cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "Add"])
+                    cursor.execute(sql, [user, s_ID, num, pName, "Add"])
+                    _conn.commit()
+                    cursor.execute(sqlr, [user, s_ID, num, pName, pID, "Add"])
                     _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
 
@@ -437,8 +459,9 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     pID = i[1]
                     sql = "insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) values (?,?,?,?,?)"
                     sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName,t_pID, t_Action) values (?,?,?,?,?,?)"
-                    cursor.execute(sql, [user, s_ID, c_ID, pName, "delete"])
-                    cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "delete"])
+                    cursor.execute(sql, [user, s_ID, num, pName, "delete"])
+                    _conn.commit()
+                    cursor.execute(sqlr, [user, s_ID, num, pName, pID, "delete"])
                     _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
             
@@ -491,7 +514,7 @@ def requests(_conn, user, c_ID, ID):
             dele = """select t_Name, t_ID, t_cID, t_Action 
             from ticket where t_pName = ? 
             and t_cID = ? 
-            and t_Action like 'Delete' """
+            and t_Action like 'delete' """
             cursor.execute(dele, [user, c_ID])
             okay = cursor.fetchall()
             print("Requests for: ")
@@ -537,19 +560,35 @@ def judgement(_conn, okay):
     
     if choice == "1" or choice == "Approve":       
         ID = int(input("Student ID of Ticket: "))
+        
         for i in okay:
             sName = i[0]
             sID = i[1]
             cID = i[2]
-
-            sql = "insert into classRoster(cl_name, cl_ID, cl_cID) values (?, ?, ?)"
-            ls = "delete from ticket where t_ID = ? and t_cID = ?"
-            sl = "delete from request where r_ID = ? and r_cID = ?"
-            cur.execute(sql, [sName, ID, cID])
-            cur.execute(ls, [ID, cID])
-            cur.execute(sl, [ID, cID])
-            _conn.commit()
-            print("success")
+            action = i[3]
+            if action == "ADD":
+                sql = "insert into classRoster(cl_name, cl_ID, cl_cID) values (?, ?, ?)"
+                ls = "delete from ticket where t_ID = ? and t_cID = ?"
+                sl = "delete from request where r_ID = ? and r_cID = ?"
+                cur.execute(sql, [sName, ID, cID])
+                _conn.commit()
+                cur.execute(ls, [ID, cID])
+                _conn.commit()
+                cur.execute(sl, [ID, cID])
+                _conn.commit()
+                print("success")
+                
+            if action == "delete":
+                sql = "delete from classRoster where cl_name = ? and cl_ID = ? and cl_cID = ?"
+                ls = "delete from ticket where t_ID = ? and t_cID = ?"
+                sl = "delete from request where r_ID = ? and r_cID = ?"
+                cur.execute(sql, [sName, ID, cID])
+                _conn.commit()
+                cur.execute(ls, [ID, cID])
+                _conn.commit()
+                cur.execute(sl, [ID, cID])
+                _conn.commit()
+                print("success")
     
     if choice == "2" or choice == "Delete":      
         ID = input("Student ID of Ticket: ")
@@ -660,6 +699,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
