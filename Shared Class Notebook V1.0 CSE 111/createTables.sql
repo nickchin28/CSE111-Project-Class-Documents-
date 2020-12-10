@@ -44,8 +44,10 @@ CREATE TABLE classRoster(
 drop table classRoster;
 
 CREATE TABLE classCatalog(
+            clas_subject VARCHAR(50) not null,
             cla_name VARCHAR(50) not null,
             cla_cID INT not null);    
+            
 DROP TABLE classCatalog;       
 
 CREATE TABLE department(
@@ -69,7 +71,8 @@ CREATE TABLE files(
             f_timeStamp TEXT not null,
             f_cID INT not null,
             f_content TEXT not null,
-            f_nID int not null);   
+            f_nID int not null);
+DROP TABLE files;   
 
 CREATE TABLE request(
             r_Name VARCHAR(50) not null,
@@ -95,4 +98,5 @@ CREATE TABLE proDep(
             pd_depart VARCHAR(50) not null);     
                    
 DROP TABLE proDep;
+
             
