@@ -21,7 +21,6 @@ insert into account (a_name, a_pass, a_ID, a_type) values
 ("ama","zon", ABS(RANDOM()) % (999 - 100) + 100, "prof"),
 ("data","base", ABS(RANDOM()) % (999 - 100) + 100, "prof");
 
-
 /*populate student*/
 insert into student(s_name, s_ID, s_age, s_year) 
 SELECT a_name, a_ID, ABS(RANDOM()) % (24 - 18) + 18, ABS(RANDOM()) % (6 - 1) + 1
@@ -108,35 +107,36 @@ insert into classCatalog(cla_name, cla_ID, cla_cID)
 select p_class, p_ID, ABS(RANDOM()) % (99- 10) + 10 
 from professor;
 
+
 /*putting prof in the class*/
-insert into classRoster(cl_name,cl_ID,cl_cID)
+insert or IGNORE into classRoster(cl_name,cl_ID,cl_cID)
 select p_name, p_ID, cla_cID
 from professor, classcatalog
-where p_class = cla_name AND
-p_ID = cla_ID;
+where (p_class = cla_name AND
+p_ID = cla_ID);
 
 /*putting students in class*/ 
 insert into classRoster(cl_name, cl_ID, cl_cID) values 
-("brian", 825, 95),
-("brian", 825, 98),
-("brian", 825, 70),
-("minh", 860, 80),
-("minh", 860, 83),
-("tang", 702, 90),
-("tang", 702, 77),
-("tang", 702, 95),
-("aye", 982, 70),
-("aye", 982, 64),
-("potato", 492, 85),
-("heyo", 689, 29),
-("heyo", 689, 95),
-("pringles", 766, 98),
-("pringles", 766, 70),
-("pringles", 766, 80),
-("lays",770,83),
-("lays",770,90),
-("lays",770,77),
-("lays",770,95);
+("brian", 913, 67),
+("brian", 913, 85),
+("brian", 913, 28),
+("minh", 836, 37),
+("minh", 836, 28),
+("tang", 149, 18),
+("tang", 149, 43),
+("tang", 149, 53),
+("aye", 309, 20),
+("aye", 309, 48),
+("potato", 672, 25),
+("heyo", 457, 59),
+("heyo", 457, 30),
+("pringles", 900, 88),
+("pringles", 900, 48),
+("pringles", 900, 20),
+("lays", 845,25),
+("lays", 845,59),
+("lays", 845,18),
+("lays", 845,88);
 
 
 /*creating initial timestamp of folder access*/
@@ -149,11 +149,23 @@ insert into notePages (n_docName, n_timeStamp, n_cID, n_content, n_nID)
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
 from classFolder;
 
-INSERT into department (d_name, d_cID, d_ID, d_dept)
-SELECT DISTINCT p_name, cla_cID , p_ID, "CSE"
+INSERT into department (d_name, d_ID, d_dept)
+SELECT DISTINCT p_name, p_ID, "CSE"
 FROM professor, classCatalog
 WHERE p_ID = cla_ID
     AND p_class LIKE "CSE%";
+
+INSERT into department (d_name, d_ID, d_dept)
+SELECT DISTINCT p_name, p_ID, "Wri"
+FROM professor, classCatalog
+WHERE p_ID = cla_ID
+    AND p_class LIKE "Wri%";
+
+INSERT into department (d_name, d_ID, d_dept)
+SELECT DISTINCT p_name, p_ID, "SCI"
+FROM professor, classCatalog
+WHERE p_ID = cla_ID
+    AND p_class LIKE "SCI%";
 
 insert into files (f_docName, f_timeStamp, f_cID, f_content, f_nID) 
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
@@ -168,7 +180,7 @@ SELECT DISTINCT p_class, p_ID
 from professor JOIN classCatalog
 ON p_ID = cla_ID;
 
-insert into rosterToCatalog (rtc_name, rtc_className, rtc_cID ) 
-SELECT cl_name, cla_name, cl_cID 
+insert into rosterToCatalog (rtc_id, rtc_className, rtc_cID ) 
+SELECT cl_id, cla_name, cl_cID
 from classRoster JOIN classCatalog
 ON cl_cID = cla_cID;
