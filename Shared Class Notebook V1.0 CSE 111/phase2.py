@@ -57,7 +57,6 @@ def login(_conn):
                 print("Hello " + i[0] + "!")
                 print(" ")
                 print("Login successful")
-                print(" ")
                 dist = ("select a_type from account where a_ID = ?")
                 cursor.execute(dist, [(i[3])])
                 fol = cursor.fetchall()
@@ -76,7 +75,8 @@ def login(_conn):
                     
             return("exit")
         else:
-            print("User or password is incorrect")
+            print(" ")
+            print("User or password is incorrect!!")
             again = input("Would you like logging in again? [y/n]: ")
             if again.lower() == "n":
                 print("Exited")
@@ -120,7 +120,7 @@ def classNotes(_conn, user, s_ID, c_ID):
     
     while user:
         
-        print ("All of your notes")
+        print ("All of your classes notes")
         sqlnote = """SELECT Distinct n_docName, n_timeStamp, n_cID, n_content, n_nID
                     FROM notePages, student, classRoster
                     WHERE n_cID = ?"""
@@ -147,6 +147,11 @@ def classNotes(_conn, user, s_ID, c_ID):
             sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
                     VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
             cursor.execute(sql, [name, c_ID, content])
+            n_nID = """ SELECT n_nID FROM notePages where n_content = ? and n_docName = ? """
+            cursor.execute(n_nID, [content,name])
+            sql = """INSERT into files (n_docName,n_timeStamp, n_cID, n_content, n_nID)
+                    VALUES (?, dateTime(), ?, ?, ?);"""
+            cursor.execute(sql, [name, c_ID, content, n_nID])
             print("success")
             #if image == ("y" or "Y"):
              #   iname = input("Please input image name:")
@@ -158,14 +163,38 @@ def classNotes(_conn, user, s_ID, c_ID):
             
         if choice == "2":
             neditID = input("Which note would you like to edit: ")
-            name = input("Change name of document: ")
-            content = input("Start writing something new: ")
+            change = input("Would you like to change the name of the note? [y/n] ")
+            if change == ("y" or "Y"):
+                name = input("Change name of document: ")
+                sql = """UPDATE notepages 
+                    SET n_docName = ?,
+                    n_timeStamp = dateTime(),
+                    WHERE n_nID = ?;"""
+                cursor.execute(sql, [name, neditID])
+                cid = """select n_cID, n_content
+                    from notePages
+                    WHERE n_nID = ?;"""
+                cursor.execute(cid, [neditID])
+
+                sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                    Values( ?, dateTime(), ?, ?, ?) ;"""
+                cursor.execute(sql1, [name, cid[0], cid[1], neditID])
+
+            change2 = input("Would you like to change the contents of the note? [y/n] ")
+            if change2 == ("y" or "Y"):
+                content = input("Start writing something new: ")
             sql = """UPDATE notepages 
                     SET n_content = ?, 
                     n_timeStamp = dateTime(),
-                    n_docName = ?
                     WHERE n_nID = ?;"""
-            cursor.execute(sql, [content, name, neditID])
+            cursor.execute(sql, [content,neditID])
+            cid1 = """select n_docName, n_cID
+                    from notePages
+                    WHERE n_nID = ?;"""
+            cursor.execute(cid1, [neditID])
+            sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                    Values( ?, dateTime(), ?, ?, ?) ;"""
+            cursor.execute(sql1, [cid1[0],cid1[1], content, neditID])
 
         if choice == "3":
             nID = input("Input the note ID: ")
@@ -184,6 +213,113 @@ def classNotes(_conn, user, s_ID, c_ID):
         if choice == "4":     
             print("Exited")
             stuAccess(_conn, user, s_ID, c_ID)
+
+def profclassNotes(_conn, user, c_ID, p_ID, typ):
+    
+    cursor = _conn.cursor()
+    
+    while user:
+        
+        print ("All of your classes notes")
+        ote = """select * 
+            from notePages 
+            where n_cID = (Select cl_cID 
+                    from classRoster 
+                    where cl_ID = ?)"""
+        cursor.execute(ote, [p_ID])
+        note = cursor.fetchall()
+        l = '{:15}{:}{:}{:8}{:}{:}{:}{:}{:}'.format("DocName", "|", "ClassID", "|", "Time of Last", "|", "User Edit", "|", "Content")
+        print(l)
+        for i in note:
+            name = i[0]
+            time = i[1]
+            cID = i[2]
+            content = i[3]
+            uID = i[4]
+            l = '{:15}{:6}{:}{:}{:}{:}{:9}{:}{:}'.format(name, "|", cID, "|", time, "|", uID, "|", content)
+            print(l)
+
+        print(" ")
+        print("1. Add Notes")
+        print("2. Edit Notes")
+        print("3. View specific notes")
+        print("4. Exit from notes")
+        choice = input("What would you like to do? ")
+        print(" ")
+        
+        if choice == "1":
+            name = input("Name of new of document: ")
+            content = input("Start writing something: ")
+            #image = input("Would you like to include an image (y/n): ")
+            sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
+                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+            cursor.execute(sql, [name, c_ID, content])
+            n_nID = """ SELECT n_nID FROM notePages where n_content = ? and n_docName = ? """
+            cursor.execute(n_nID, [content,name])
+            sql = """INSERT into files (n_docName,n_timeStamp, n_cID, n_content, n_nID)
+                    VALUES (?, dateTime(), ?, ?, ?);"""
+            cursor.execute(sql, [name, c_ID, content, n_nID])
+            print("success")
+            #if image == ("y" or "Y"):
+             #   iname = input("Please input image name:")
+              #  icontent = input("Please input image content: ")
+               # sql = """INSERT into images (i_docName,i_timeStamp, i_cID i_content, i_nID)
+                 #   VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+                #cursor.execute(sql, [iname, c_ID, icontent])
+                #print("success")
+            
+        if choice == "2":
+            neditID = input("Which note would you like to edit: ")
+            change = input("Would you like to change the name of the note? [y/n] ")
+            if change == ("y" or "Y"):
+                name = input("Change name of document: ")
+                sql = """UPDATE notepages 
+                    SET n_docName = ?,
+                    n_timeStamp = dateTime(),
+                    WHERE n_nID = ?;"""
+                cursor.execute(sql, [name, neditID])
+                cid = """select n_cID, n_content
+                    from notePages
+                    WHERE n_nID = ?;"""
+                cursor.execute(cid, [neditID])
+
+                sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                    Values( ?, dateTime(), ?, ?, ?) ;"""
+                cursor.execute(sql1, [name, cid[0], cid[1], neditID])
+
+            change2 = input("Would you like to change the contents of the note? [y/n] ")
+            if change2 == ("y" or "Y"):
+                content = input("Start writing something new: ")
+            sql = """UPDATE notepages 
+                    SET n_content = ?, 
+                    n_timeStamp = dateTime(),
+                    WHERE n_nID = ?;"""
+            cursor.execute(sql, [content,neditID])
+            cid1 = """select n_docName, n_cID
+                    from notePages
+                    WHERE n_nID = ?;"""
+            cursor.execute(cid1, [neditID])
+            sql1 = """INSERT into files (f_docName, f_timeStamp, f_cID, f_content, f_nID)
+                    Values( ?, dateTime(), ?, ?, ?) ;"""
+            cursor.execute(sql1, [cid1[0],cid1[1], content, neditID])
+
+        if choice == "3":
+            nID = input("Input the note ID: ")
+            sql = """SELECT n_docName, n_timeStamp, n_content , n_cID, n_nID
+                        FROM notePages
+                        WHERE n_nID = ? ;"""
+            cursor.execute(sql, [nID])
+            rows = cursor.fetchall()
+            header = '{:>10} {:} {:<40}{:} {:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+            print(header)
+
+            for row in rows:
+                data = '\n{:>10}{:} {:<40}{:} {:>10}{:} {:>10}{:} {:>10}'.format(row[0], "|", row[1],"|", row[2],"|", row[3],"|", row[4])
+                print(data)
+
+        if choice == "4":     
+            print("Exited")
+            profAccess(_conn, user, p_ID, typ)     
             
                                   
 def stuAccess(_conn, user, s_ID, c_ID):
@@ -435,6 +571,7 @@ def profAccess(_conn, user, p_ID, typ):
     cursor = _conn.cursor()
         
     while user:
+        print(" ")
         print("1. What classes do I teach?")
         print("2. Show all your class rosters")
         print("3. Check Registration requests")
@@ -487,23 +624,9 @@ def profAccess(_conn, user, p_ID, typ):
             
         if choice == "4":
             print(" ")
-            ote = """select * 
-            from notePages 
-            where n_cID = (Select cl_cID 
-                    from classRoster 
-                    where cl_ID = ?)"""
-            cursor.execute(ote, [p_ID])
-            note = cursor.fetchall()
-            l = '{:15}{:}{:}{:8}{:}{:}{:}{:}{:}'.format("DocName", "|", "ClassID", "|", "Time of Last", "|", "User Edit", "|", "Content")
-            print(l)
-            for i in note:
-                name = i[0]
-                time = i[1]
-                cID = i[2]
-                content = i[3]
-                uID = i[4]
-                l = '{:15}{:6}{:}{:}{:}{:}{:9}{:}{:}'.format(name, "|", cID, "|", time, "|", uID, "|", content)
-                print(l)
+            c_ID = ("select cl_cID from classRoster, professor where p_name = ? and p_ID = ? and p_ID = cl_ID;")
+            cursor.execute(c_ID, [user, p_ID])
+            profclassNotes(_conn, user, c_ID, p_ID, typ)
         
         if choice == "5":
             print(" ")
@@ -521,7 +644,7 @@ def profAccess(_conn, user, p_ID, typ):
                 
         if choice == "6":
             print("Logging you out")
-            login(_conn)
+            exit()
         
             
 def main():
