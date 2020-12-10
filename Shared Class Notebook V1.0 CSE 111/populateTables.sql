@@ -103,40 +103,39 @@ a_name = "ama";
 
 
 /*populate classCatalog*/
-insert into classCatalog(cla_name, cla_ID, cla_cID)
-select p_class, p_ID, ABS(RANDOM()) % (99- 10) + 10 
+insert into classCatalog(cla_name, cla_cID)
+select p_class, ABS(RANDOM()) % (99- 10) + 10 
 from professor;
 
 
 /*putting prof in the class*/
 insert or IGNORE into classRoster(cl_name,cl_ID,cl_cID)
-select p_name, p_ID, cla_cID
+select p_name, p_ID ,cla_cID
 from professor, classcatalog
-where (p_class = cla_name AND
-p_ID = cla_ID);
+where (p_class = cla_name);
 
 /*putting students in class*/ 
 insert into classRoster(cl_name, cl_ID, cl_cID) values 
-("brian", 913, 67),
-("brian", 913, 85),
-("brian", 913, 28),
-("minh", 836, 37),
-("minh", 836, 28),
-("tang", 149, 18),
-("tang", 149, 43),
-("tang", 149, 53),
-("aye", 309, 20),
-("aye", 309, 48),
-("potato", 672, 25),
-("heyo", 457, 59),
-("heyo", 457, 30),
-("pringles", 900, 88),
-("pringles", 900, 48),
-("pringles", 900, 20),
-("lays", 845,25),
-("lays", 845,59),
-("lays", 845,18),
-("lays", 845,88);
+("brian", 277, 15),
+("brian", 277, 63),
+("brian", 277, 52),
+("minh", 749, 25),
+("minh", 749, 17),
+("tang", 545, 96),
+("tang", 545, 58),
+("tang", 545, 92),
+("aye", 669, 82),
+("aye", 669, 37),
+("potato", 591, 27),
+("heyo", 403, 58),
+("heyo", 403, 15),
+("pringles", 539, 63),
+("pringles", 539, 52),
+("pringles", 539, 25),
+("lays", 341,17),
+("lays", 341,96),
+("lays", 341,58),
+("lays", 341,92);
 
 
 /*creating initial timestamp of folder access*/
@@ -152,20 +151,17 @@ from classFolder;
 INSERT into department (d_name, d_ID, d_dept)
 SELECT DISTINCT p_name, p_ID, "CSE"
 FROM professor, classCatalog
-WHERE p_ID = cla_ID
-    AND p_class LIKE "CSE%";
+WHERE p_class LIKE "CSE%";
 
 INSERT into department (d_name, d_ID, d_dept)
 SELECT DISTINCT p_name, p_ID, "Wri"
 FROM professor, classCatalog
-WHERE p_ID = cla_ID
-    AND p_class LIKE "Wri%";
+WHERE p_class LIKE "Wri%";
 
 INSERT into department (d_name, d_ID, d_dept)
 SELECT DISTINCT p_name, p_ID, "SCI"
 FROM professor, classCatalog
-WHERE p_ID = cla_ID
-    AND p_class LIKE "SCI%";
+WHERE p_class LIKE "SCI%";
 
 insert into files (f_docName, f_timeStamp, f_cID, f_content, f_nID) 
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
@@ -175,12 +171,39 @@ insert into images (i_docName, i_timeStamp, i_cID, i_content, i_nID)
 SELECT "DOC #1", dateTime(), class_cID, "INSERT DOCUMENTATION", ABS(RANDOM()) % (99 - 1) + 1
 from classFolder;
 
-insert into profClass (pc_classname, pc_ID) 
-SELECT DISTINCT p_class, p_ID
-from professor JOIN classCatalog
-ON p_ID = cla_ID;
+insert into proDep (pd_Name, pd_ID, pd_cName, pd_depart) 
+SELECT DISTINCT p_name, p_ID, p_class, d_dept
+from professor JOIN department
+ON p_name = d_name;
 
-insert into rosterToCatalog (rtc_id, rtc_className, rtc_cID ) 
-SELECT cl_id, cla_name, cl_cID
-from classRoster JOIN classCatalog
-ON cl_cID = cla_cID;
+insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) 
+SELECT DISTINCT s_name, s_ID, 82 , p_name, "ADD"
+from student, professor, classCatalog, classRoster
+WHERE s_name = "brian"
+    AND cla_cID = cl_cID
+    AND cl_ID = p_ID
+    AND cl_cID = 82;
+
+insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) 
+SELECT DISTINCT s_name, s_ID, 82 , p_name, "ADD"
+from student, professor, classCatalog, classRoster
+WHERE s_name = "minh"
+    AND cla_cID = cl_cID
+    AND cl_ID = p_ID
+    AND cl_cID = 82;
+
+insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) 
+SELECT DISTINCT s_name, s_ID, 63 , p_name, "ADD"
+from student, professor, classCatalog, classRoster
+WHERE s_name = "tang"
+    AND cla_cID = cl_cID
+    AND cl_ID = p_ID
+    AND cl_cID = 63;
+
+
+insert into ticket (t_Name, t_ID, t_cID, t_pName, t_pID, t_Action) 
+SELECT DISTINCT r_name, r_ID, r_cID, p_name, p_ID, r_Action
+from professor JOIN request
+ON p_name = r_Pname;
+
+

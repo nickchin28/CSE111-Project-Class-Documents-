@@ -17,8 +17,8 @@ drop table student;
 CREATE TABLE classFolder(
             class_name VARCHAR(50) not null,
             class_cID INT not null,
-            class_lTime TEXT not null,
-            constraint cl unique(class_cID));
+            class_lTime TEXT not null);
+            --constraint cl unique(class_cID));
 
 DROP TABLE classFolder;
 
@@ -27,8 +27,8 @@ CREATE TABLE notePages(
             n_timeStamp TEXT not null,
             n_cID INT not null,
             n_content TEXT not null,
-            n_nID int not null,
-            constraint note unique(n_nID));
+            n_nID int not null);
+            --constraint note unique(n_nID));
 drop table notePages;
 
 CREATE TABLE professor(
@@ -44,10 +44,9 @@ CREATE TABLE classRoster(
 drop table classRoster;
 
 CREATE TABLE classCatalog(
-            clas_subject VARCHAR(50) not null,
             cla_name VARCHAR(50) not null,
             cla_cID INT not null);    
-            
+
 DROP TABLE classCatalog;       
 
 CREATE TABLE department(
@@ -78,6 +77,7 @@ CREATE TABLE request(
             r_Name VARCHAR(50) not null,
             r_ID INT not null,
             r_cID INT not null,
+            r_pName VARCHAR(50) not null,
             r_Action VARCHAR(50) not null);     
                    
 DROP TABLE request;
@@ -87,7 +87,8 @@ CREATE TABLE ticket(
             t_ID INT not null,
             t_cID INT not null,
             t_pName VARCHAR(50) not null,
-            r_Action VARCHAR(50) not null);     
+            t_pID INT not null,
+            t_Action VARCHAR(50) not null);     
                    
 DROP TABLE ticket;
 
