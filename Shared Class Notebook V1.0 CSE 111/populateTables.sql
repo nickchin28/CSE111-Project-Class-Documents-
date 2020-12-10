@@ -81,7 +81,7 @@ select a_name, "CSE-111", a_ID
 from account
 where a_type = "prof" and 
 a_name = "ama";
-
+ 
 insert into professor(p_name, p_class, p_ID)
 select a_name, "CSE-140", a_ID
 from account
