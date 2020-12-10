@@ -86,7 +86,7 @@ DROP TABLE ticket;
 CREATE TABLE proDep(
             pd_Name VARCHAR(50) not null,
             pd_ID INT not null,
-            pd_cName INT not null,
+            pd_cName VARCHAR(50) not null,
             pd_depart VARCHAR(50) not null);     
                    
 DROP TABLE proDep;
