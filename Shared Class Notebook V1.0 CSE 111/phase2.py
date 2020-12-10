@@ -135,7 +135,7 @@ def classNotes(_conn, user, s_ID, c_ID):
             cursor.execute(sql, content, name, neditID)
 
         if choice == 3:
-            nID = ("Input the note ID: ")
+            nID = input("Input the note ID: ")
             sql = """SELECT n_docName, n_timeStamp, n_content , n_cID, n_nID
                         FROM notePages
                         WHERE n_nID = ? ;"""
@@ -203,7 +203,30 @@ def stuAccess(_conn, user, s_ID, c_ID):
         if choice == "4":
             login(_conn)
 
-     
+def requests(_conn, user, c_ID):
+    with sqlite3.connect("scnDatabase.sqlite") as data:
+        cursor = data.cursor()
+    
+    while user:
+        print("1. Look at adding requests")
+        print("2. Look at withdraw requests")
+        print("3. Exit from requests")
+        choice = input("Choose an option: ")
+        
+        if choice == 1:
+            print(" ")
+            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'a%' ")
+            cursor.execute(add, [user, c_ID])
+            okay = cursor.fetchall()
+            print("Requests for : ")
+            for i in okay:
+                print(i[0])
+    
+            print(" ")
+        
+    
+    
+         
 def profAccess(_conn, user, p_ID, typ):
     with sqlite3.connect("scnDatabase.sqlite") as data:
         cursor = data.cursor()
@@ -301,3 +324,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
