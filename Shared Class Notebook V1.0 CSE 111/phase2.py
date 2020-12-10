@@ -170,7 +170,8 @@ def stuAccess(_conn, user, s_ID, c_ID):
         print("1. Show class roster")
         print("2. Class Notes")
         print("3. Change class view")
-        print("4. Logout")
+        print("4. Make a Request")
+        print("5. Logout")
         choice = input("What would you like to do? ")
         print(" ")
         
@@ -201,8 +202,63 @@ def stuAccess(_conn, user, s_ID, c_ID):
             for i in ty:
                 typ = i[0]
                 classList(_conn, user, s_ID, typ)
-            
+        
         if choice == "4":
+            print(" ")
+            choice = int(input("Adding(1) or Withdrawing(2)?:"))
+            if choice == 1:            
+                los = ("select * from classCatalog group by cla_name")
+                cursor.execute(los)
+                note = cursor.fetchall()
+                l = '{:15}{:}{:12}'.format("Class Name", "|", "Class ID")
+                print(l)
+                print("----------------------------")
+                for i in note:
+                    cName = i[0]
+                    cID = i[1]
+                    l = '{:<15}{:}{:<12}'.format(cName, "|", cID)
+                    print(l)
+                num = int(input("Choose class ID to submit request to: "))
+                cla = ("select a_name, a_ID, a_type from classRoster, account where a_ID = cl_ID AND cl_cID = ? and a_type = 'prof' ")
+                cursor.execute(cla, [num])
+                okay = cursor.fetchall()
+                for i in okay:
+                    pName = i[0]
+                    pID = i[1]
+                    sql = "insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) values (?,?,?,?,?)"
+                    sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName, t_pID, t_Action) values (?,?,?,?,?,?)"
+                    cursor.execute(sql, [user, s_ID, c_ID, pName, "Add"])
+                    cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "Add"])
+                stuAccess(_conn, user, s_ID, c_ID)
+            if choice == 2:
+                you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
+                cursor.execute(you, [user])
+                okay = cursor.fetchall()
+                claID = []
+                l = '{:20}{:}{:5}'.format("Class Name", "|", "Class ID#")
+                print(l)
+                for i in okay:
+                    cName = i[0]
+                    cID = i[1]
+                    l = '{:20}{:}{:5}'.format(cName, "|", cID)
+                    claID.append(cID)
+                    print(l)
+                num = int(input("Which class would you like to withdraw from: "))
+                cla = ("select a_name, a_ID, a_type from classRoster, account where a_ID = cl_ID AND cl_cID = ? and a_type = 'prof' ")
+                cursor.execute(cla, [num])
+                okay = cursor.fetchall()
+                for i in okay:
+                    pName = i[0]
+                    pID = i[1]
+                    sql = "insert into request (r_Name, r_ID, r_cID, r_pName, r_Action) values (?,?,?,?,?)"
+                    sqlr = "insert into ticket (t_Name, t_ID, t_cID, t_pName,t_pID, t_Action) values (?,?,?,?,?,?)"
+                    cursor.execute(sql, [user, s_ID, c_ID, pName, "delete"])
+                    cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "delete"])
+                stuAccess(_conn, user, s_ID, c_ID)
+            
+            
+            
+        if choice == "5":
             login(_conn)
 
 
@@ -384,17 +440,16 @@ def profAccess(_conn, user, p_ID, typ):
         
         if choice == "5":
             print(" ")
-            los = ("select * from rosterToCatalog group by rtc_cID")
+            los = ("select * from classCatalog group by cla_name")
             cursor.execute(los)
             note = cursor.fetchall()
-            l = '{:15}{:}{:12}{:}{:12}'.format("Class Name", "|", "Class ID", "|", "Professor Name")
+            l = '{:15}{:}{:12}'.format("Class Name", "|", "Class ID")
             print(l)
-            print("---------------------------------")
+            print("----------------------------")
             for i in note:
-                pName = i[0]
-                cName = i[1]
-                cID = i[2]
-                l = '{:<15}{:}{:<12}{:}{:}'.format(cName, "|", cID, "|", pName)
+                cName = i[0]
+                cID = i[1]
+                l = '{:<15}{:}{:<12}'.format(cName, "|", cID)
                 print(l)
                 
         if choice == "6":
