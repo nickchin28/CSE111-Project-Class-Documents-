@@ -42,13 +42,11 @@ drop table classRoster;
 
 CREATE TABLE classCatalog(
             cla_name VARCHAR(50) not null,
-            cla_cID INT not null,
-            cla_ID int not null);    
+            cla_cID INT not null);    
 DROP TABLE classCatalog;       
 
 CREATE TABLE department(
             d_name VARCHAR(50) not null,
-            d_cID INT not null,
             d_ID int not null,
             d_dept VARCHAR(50) not null);   
 
@@ -68,16 +66,28 @@ CREATE TABLE files(
             f_content TEXT not null,
             f_nID int not null);   
 
-CREATE TABLE profClass(
-            pc_classname VARCHAR(50) not null,
-            pc_ID INT not null);     
-
-DROP TABLE profClass;            
-            
-CREATE TABLE rosterToCatalog(
-            rtc_name VARCHAR(50) not null,
-            rtc_className VARCHAR(50) not null,
-            rtc_cID INT not null);     
+CREATE TABLE request(
+            r_Name VARCHAR(50) not null,
+            r_ID INT not null,
+            r_cID INT not null,
+            r_Action VARCHAR(50) not null);     
                    
-DROP TABLE rosterToCatalog;                   
+DROP TABLE request;
+
+CREATE TABLE ticket(
+            t_Name VARCHAR(50) not null,
+            t_ID INT not null,
+            t_cID INT not null,
+            t_pName VARCHAR(50) not null,
+            r_Action VARCHAR(50) not null);     
+                   
+DROP TABLE ticket;
+
+CREATE TABLE proDep(
+            pd_Name VARCHAR(50) not null,
+            pd_ID INT not null,
+            pd_cName INT not null,
+            pd_depart VARCHAR(50) not null);     
+                   
+DROP TABLE proDep;
             
