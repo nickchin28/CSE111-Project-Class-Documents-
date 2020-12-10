@@ -29,7 +29,18 @@ def closeConnection(_conn, _dbFile):
         print(e)
 
     print("++++++++++++++++++++++++++++++++++")
-    
+
+def welcome(_conn):
+    print("Welcome to the Shared Class Notebook")
+    accountCheck = input("Do you have an account already? [y/n]: ")
+    if accountCheck == ("y" or "Y"):
+        login(_conn)
+    else:
+        print(" ")
+        print ("Please contact IT or your adminstrator to provision an account for you")
+        print("You will now be returned to the welcome page")
+        print(" ")
+        welcome(_conn)
     
 def login(_conn):
     while True:
@@ -43,8 +54,10 @@ def login(_conn):
         
         if res:
             for i in res:
-                print("Hello " + i[0])
+                print("Hello " + i[0] + "!")
+                print(" ")
                 print("Login successful")
+                print(" ")
                 dist = ("select a_type from account where a_ID = ?")
                 cursor.execute(dist, [(i[3])])
                 fol = cursor.fetchall()
@@ -64,7 +77,7 @@ def login(_conn):
             return("exit")
         else:
             print("User or password is incorrect")
-            again = input("Would you like logging in again? (y/n): ")
+            again = input("Would you like logging in again? [y/n]: ")
             if again.lower() == "n":
                 print("Exited")
                 exit()
@@ -74,7 +87,10 @@ def classList(_conn, user, ID, typ):
     
     cursor = _conn.cursor()
     
-    you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
+    you = """select cla_name, cla_cID 
+        from classCatalog, classRoster 
+        where cl_name = ? 
+        and cl_cID = cla_cID"""
     cursor.execute(you, [user])
     okay = cursor.fetchall()
     claID = []
@@ -88,6 +104,7 @@ def classList(_conn, user, ID, typ):
         print(l)
     
     print(claID)
+    print(" ")
     choose = int(input("Please Select a Class (type classID): "))
     for i in range(len(claID)):
         if choose == claID[i]:
@@ -102,6 +119,19 @@ def classNotes(_conn, user, s_ID, c_ID):
     cursor = _conn.cursor()
     
     while user:
+        
+        print ("All of your notes")
+        sqlnote = """SELECT Distinct n_docName, n_timeStamp, n_cID, n_content, n_nID
+                    FROM notePages, student, classRoster
+                    WHERE n_cID = ?"""
+        cursor.execute(sqlnote,[c_ID])
+        rows = cursor.fetchall()
+        header = '{:>10} {:} {:<40}{:} {:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+        print(header)
+        for row in rows:
+            data = '\n{:>10}{:} {:<40}{:} {:>10}{:} {:>10}{:} {:>10}'.format(row[0], "|", row[1],"|", row[2],"|", row[3],"|", row[4])
+            print(data)
+
         print(" ")
         print("1. Add Notes")
         print("2. Edit Notes")
@@ -113,18 +143,18 @@ def classNotes(_conn, user, s_ID, c_ID):
         if choice == "1":
             name = input("Name of new of document: ")
             content = input("Start writing something: ")
-            image = input("Would you like to include an image (y/n): ")
+            #image = input("Would you like to include an image (y/n): ")
             sql = """INSERT into notepages (n_docName,n_timeStamp, n_cID, n_content, n_nID)
                     VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
             cursor.execute(sql, [name, c_ID, content])
             print("success")
-            if image == ("y" or "Y"):
-                iname = input("Please input image name:")
-                icontent = input("Please input image content: ")
-                sql = """INSERT into images (i_docName,i_timeStamp, i_cID i_content, i_nID)
-                    VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
-                cursor.execute(sql, [iname, c_ID, icontent])
-                print("success")
+            #if image == ("y" or "Y"):
+             #   iname = input("Please input image name:")
+              #  icontent = input("Please input image content: ")
+               # sql = """INSERT into images (i_docName,i_timeStamp, i_cID i_content, i_nID)
+                 #   VALUES (?, dateTime(), ?, ?, ABS(RANDOM()) % (99 - 1) + 1 );"""
+                #cursor.execute(sql, [iname, c_ID, icontent])
+                #print("success")
             
         if choice == "2":
             neditID = input("Which note would you like to edit: ")
@@ -143,16 +173,16 @@ def classNotes(_conn, user, s_ID, c_ID):
                         FROM notePages
                         WHERE n_nID = ? ;"""
             cursor.execute(sql, [nID])
-            row = cursor.fetchall
-            header = '{:>10} {:<40} {:>10} {:>10} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
+            rows = cursor.fetchall()
+            header = '{:>10} {:} {:<40}{:} {:>10} {:}{:>10}{:} {:>10}'.format("DocName", "|", "TimeStamp", "|", "ClassID", "|", "Content", "|", "Note ID")
             print(header)
 
             for row in rows:
-                data = '\n{:>10} {:<40} {:>10} {:>10} {:>10}'.format(row[0], row[1], row[2], row[3], row[4])
+                data = '\n{:>10}{:} {:<40}{:} {:>10}{:} {:>10}{:} {:>10}'.format(row[0], "|", row[1],"|", row[2],"|", row[3],"|", row[4])
                 print(data)
 
         if choice == "4":     
-            print("sucess")
+            print("Exited")
             stuAccess(_conn, user, s_ID, c_ID)
             
                                   
@@ -179,7 +209,11 @@ def stuAccess(_conn, user, s_ID, c_ID):
         
         if choice == "1":
             print(" ")
-            cla = ("select a_name, a_type from classRoster, account where a_ID = cl_ID AND cl_cID = ? group by a_type")
+            cla = """select a_name, a_type 
+                from classRoster, account 
+                where a_ID = cl_ID 
+                AND cl_cID = ? 
+                group by a_type"""
             cursor.execute(cla, [c_ID])
             okay = cursor.fetchall()
             l = '{:<10}{:}{:}'.format("Name", "|", "Type")
@@ -221,7 +255,11 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     l = '{:<15}{:}{:<12}'.format(cName, "|", cID)
                     print(l)
                 num = int(input("Choose class ID to submit request to: "))
-                cla = ("select a_name, a_ID, a_type from classRoster, account where a_ID = cl_ID AND cl_cID = ? and a_type = 'prof' ")
+                cla = """select a_name, a_ID, a_type 
+                from classRoster, account 
+                where a_ID = cl_ID 
+                AND cl_cID = ? 
+                and a_type = 'prof' """
                 cursor.execute(cla, [num])
                 okay = cursor.fetchall()
                 for i in okay:
@@ -233,8 +271,12 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     cursor.execute(sqlr, [user, s_ID, c_ID, pName, pID, "Add"])
                     _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
+
             if choice == 2:
-                you = ("select cla_name, cla_cID from classCatalog, classRoster where cl_name = ? and cl_cID = cla_cID")
+                you = """select cla_name, cla_cID 
+                from classCatalog, classRoster 
+                where cl_name = ? 
+                and cl_cID = cla_cID"""
                 cursor.execute(you, [user])
                 okay = cursor.fetchall()
                 claID = []
@@ -247,7 +289,11 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     claID.append(cID)
                     print(l)
                 num = int(input("Which class would you like to withdraw from: "))
-                cla = ("select a_name, a_ID, a_type from classRoster, account where a_ID = cl_ID AND cl_cID = ? and a_type = 'prof' ")
+                cla = """select a_name, a_ID, a_type 
+                from classRoster, account 
+                where a_ID = cl_ID 
+                AND cl_cID = ? 
+                and a_type = 'prof' """
                 cursor.execute(cla, [num])
                 okay = cursor.fetchall()
                 for i in okay:
@@ -260,11 +306,9 @@ def stuAccess(_conn, user, s_ID, c_ID):
                     _conn.commit()
                 stuAccess(_conn, user, s_ID, c_ID)
             
-            
-            
         if choice == "5":
-            login(_conn)
-
+            print("Logging you out")
+            exit()
 
 def requests(_conn, user, c_ID, ID):
     
@@ -289,7 +333,10 @@ def requests(_conn, user, c_ID, ID):
         
         if choice == "1":
             print(" ")
-            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'ADD' ")
+            add = """select t_Name, t_ID, t_cID, t_Action 
+            from ticket where t_pName = ? 
+            and t_cID = ? 
+            and t_Action like 'ADD' """
             cursor.execute(add, [user, c_ID])
             okay = cursor.fetchall()
             l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format("Student Name", "|", "Student ID", "|", "Class ID", "|", "Action")
@@ -305,7 +352,10 @@ def requests(_conn, user, c_ID, ID):
 
         if choice == 2:
             print(" ")
-            dele = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? and t_Action like 'Delete' ")
+            dele = """select t_Name, t_ID, t_cID, t_Action 
+            from ticket where t_pName = ? 
+            and t_cID = ? 
+            and t_Action like 'Delete' """
             cursor.execute(dele, [user, c_ID])
             okay = cursor.fetchall()
             print("Requests for: ")
@@ -319,7 +369,9 @@ def requests(_conn, user, c_ID, ID):
             print(" ")
 
         if choice == "3":
-            add = ("select t_Name, t_ID, t_cID, t_Action from ticket where t_pName = ? and t_cID = ? ")
+            add = """select t_Name, t_ID, t_cID, t_Action 
+            from ticket where t_pName = ? 
+            and t_cID = ? """
             cursor.execute(add, [user, c_ID])
             okay = cursor.fetchall()
             l = '{:<15}{:}{:>15}{:}{:>15}{:}{:}'.format("Student Name", "|", "Student ID", "|", "Class ID", "|", "Action")
@@ -409,7 +461,11 @@ def profAccess(_conn, user, p_ID, typ):
             okay = cursor.fetchall()
             for i in okay:
                 
-                ros = ("select cla_name, cl_name, cl_ID, a_type from classRoster, classCatalog,account where cla_Name = ? and cla_cID = cl_cID and cl_ID = a_ID")
+                ros = """select cla_name, cl_name, cl_ID, a_type 
+                from classRoster, classCatalog,account 
+                where cla_Name = ? 
+                and cla_cID = cl_cID 
+                and cl_ID = a_ID"""
                 cursor.execute(ros, [i[0]])
                 ter = cursor.fetchall()
                 l = '{:<10}{:}{:>15}{:}{:>15}{:}{:>15}'.format("Class", "|", "NAME", "|", "USER ID", "|", "TYPE")
@@ -431,7 +487,11 @@ def profAccess(_conn, user, p_ID, typ):
             
         if choice == "4":
             print(" ")
-            ote = ("select * from notePages where n_cID = (Select cl_cID from classRoster where cl_ID = ?)")
+            ote = """select * 
+            from notePages 
+            where n_cID = (Select cl_cID 
+                    from classRoster 
+                    where cl_ID = ?)"""
             cursor.execute(ote, [p_ID])
             note = cursor.fetchall()
             l = '{:15}{:}{:}{:8}{:}{:}{:}{:}{:}'.format("DocName", "|", "ClassID", "|", "Time of Last", "|", "User Edit", "|", "Content")
@@ -460,6 +520,7 @@ def profAccess(_conn, user, p_ID, typ):
                 print(l)
                 
         if choice == "6":
+            print("Logging you out")
             login(_conn)
         
             
@@ -469,8 +530,7 @@ def main():
     # create a database connection
     conn = openConnection(database)
     with conn:
-        login(conn)
-        judgement(conn)
+        welcome(conn)
 
     closeConnection(conn, database)
 

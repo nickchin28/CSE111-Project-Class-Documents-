@@ -177,3 +177,9 @@ from classRoster, classCatalog,account
 where cla_Name = "CSE-111" and 
 cla_cID = cl_cID and 
 cl_ID = a_ID;
+
+SELECT n_docName, n_timeStamp, n_cID, n_content, n_nID
+FROM notePages, student, classRoster
+WHERE s_ID = cl_ID
+AND cl_cID = n_cID
+AND s_ID = 277;
